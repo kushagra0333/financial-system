@@ -139,23 +139,23 @@ export function GraphViewScreen({ ring, onBack }: GraphViewScreenProps) {
     <div className="min-h-screen bg-background">
       {/* Top Navbar */}
       <nav className="border-b border-border bg-card">
-        <div className="px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="px-4 md:px-8 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
             <Button
               onClick={onBack}
               variant="ghost"
-              className="text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground p-0 h-auto"
               size="sm"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-6 h-6" />
             </Button>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#3B82F6] to-[#2563EB] rounded-lg flex items-center justify-center">
-                <Activity className="w-6 h-6 text-white" />
+              <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-[#3B82F6] to-[#2563EB] rounded-lg flex items-center justify-center shrink-0">
+                <Activity className="w-5 h-5 md:w-6 md:h-6 text-white" />
               </div>
-              <div>
-                <h1 className="text-xl font-semibold text-foreground tracking-tight">
-                  RIFT Financial Forensics Engine
+              <div className="hidden sm:block">
+                <h1 className="text-lg md:text-xl font-semibold text-foreground tracking-tight">
+                  RIFT Financial Forensics
                 </h1>
                 <p className="text-xs text-muted-foreground">Ring Detail View</p>
               </div>
@@ -246,8 +246,8 @@ export function GraphViewScreen({ ring, onBack }: GraphViewScreenProps) {
 
         {/* Right Panel - Account Details */}
         {selectedAccountData && (
-          <aside className="w-96 border-l border-border bg-card overflow-y-auto">
-            <div className="p-6">
+          <aside className="fixed inset-x-0 bottom-0 z-50 h-[60vh] md:h-auto md:static md:w-96 md:inset-auto bg-card border-t md:border-t-0 md:border-l border-border shadow-2xl md:shadow-none rounded-t-xl md:rounded-none flex flex-col transition-transform duration-300 ease-in-out transform translate-y-0">
+            <div className="p-6 overflow-y-auto h-full">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold text-foreground">Account Details</h3>
                 <button

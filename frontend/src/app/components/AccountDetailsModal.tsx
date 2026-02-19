@@ -61,10 +61,10 @@ export function AccountDetailsModal({ accountId, isOpen, onClose }: AccountDetai
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-            <div className="bg-card w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-xl border border-border shadow-2xl flex flex-col">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 md:p-4 bg-black/50 backdrop-blur-sm">
+            <div className="bg-card w-full max-w-4xl max-h-[95vh] md:max-h-[90vh] overflow-y-auto rounded-xl border border-border shadow-2xl flex flex-col">
                 {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-border sticky top-0 bg-card z-10">
+                <div className="flex items-center justify-between p-4 md:p-6 border-b border-border sticky top-0 bg-card z-10">
                     <div>
                         <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
                             <Shield className="w-6 h-6 text-primary" />
@@ -80,7 +80,7 @@ export function AccountDetailsModal({ accountId, isOpen, onClose }: AccountDetai
                     </button>
                 </div>
 
-                <div className="p-6 space-y-8">
+                <div className="p-4 md:p-6 space-y-8">
                     {isLoading ? (
                         <div className="flex items-center justify-center py-12">
                             <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
@@ -136,8 +136,8 @@ export function AccountDetailsModal({ accountId, isOpen, onClose }: AccountDetai
                                         <AlertTriangle className="w-4 h-4 text-primary" />
                                         Score Breakdown
                                     </h3>
-                                    <div className="bg-card border border-border rounded-lg overflow-hidden">
-                                        <table className="w-full text-sm">
+                                    <div className="bg-card border border-border rounded-lg overflow-hidden overflow-x-auto">
+                                        <table className="w-full text-sm min-w-[400px] md:min-w-0">
                                             <thead className="bg-secondary/50">
                                                 <tr>
                                                     <th className="px-4 py-3 text-left text-muted-foreground font-medium">Risk Factor</th>
@@ -167,8 +167,8 @@ export function AccountDetailsModal({ accountId, isOpen, onClose }: AccountDetai
                             {/* Transactions Section */}
                             <div className="space-y-4">
                                 <h3 className="text-lg font-semibold text-foreground">Recent Activity</h3>
-                                <div className="bg-card border border-border rounded-lg overflow-hidden max-h-[400px] overflow-y-auto">
-                                    <table className="w-full text-sm">
+                                <div className="bg-card border border-border rounded-lg overflow-hidden max-h-[400px] overflow-y-auto overflow-x-auto">
+                                    <table className="w-full text-sm min-w-[500px] md:min-w-0">
                                         <thead className="bg-secondary/50 sticky top-0 z-10">
                                             <tr>
                                                 <th className="px-4 py-3 text-left text-muted-foreground font-medium">Date</th>
@@ -183,8 +183,8 @@ export function AccountDetailsModal({ accountId, isOpen, onClose }: AccountDetai
                                                     <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{tx.date}</td>
                                                     <td className="px-4 py-3">
                                                         <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${tx.type === 'Incoming'
-                                                                ? 'bg-emerald-500/10 text-emerald-500'
-                                                                : 'bg-destructive/10 text-destructive'
+                                                            ? 'bg-emerald-500/10 text-emerald-500'
+                                                            : 'bg-destructive/10 text-destructive'
                                                             }`}>
                                                             {tx.type === 'Incoming' ? <ArrowLeft className="w-3 h-3" /> : <ArrowRight className="w-3 h-3" />}
                                                             {tx.type}

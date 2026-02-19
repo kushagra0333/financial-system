@@ -51,13 +51,13 @@ export function LandingScreen({ onUploadComplete, isLoading, error }: LandingScr
     <div className="min-h-screen bg-background">
       {/* Top Navbar */}
       <nav className="border-b border-border bg-card">
-        <div className="mx-auto px-8 py-4 flex items-center justify-between">
+        <div className="mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-[#3B82F6] to-[#2563EB] rounded-lg flex items-center justify-center">
               <Activity className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-semibold text-foreground tracking-tight">
+              <h1 className="text-lg md:text-xl font-semibold text-foreground tracking-tight">
                 RIFT Financial Forensics Engine
               </h1>
               <p className="text-xs text-muted-foreground">Graph-Based Crime Detection</p>
@@ -65,14 +65,14 @@ export function LandingScreen({ onUploadComplete, isLoading, error }: LandingScr
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-            <span className="text-sm text-muted-foreground mr-4">System Ready</span>
+            <span className="text-sm text-muted-foreground mr-4 hidden sm:inline">System Ready</span>
             <ThemeToggle />
           </div>
         </div>
       </nav>
 
       {/* Main Content */}
-      <main className="mx-auto max-w-5xl px-8 py-16">
+      <main className="mx-auto max-w-5xl px-4 md:px-8 py-8 md:py-16">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-semibold text-foreground mb-4 tracking-tight">
             Graph-Based Money Muling Detection
@@ -83,9 +83,9 @@ export function LandingScreen({ onUploadComplete, isLoading, error }: LandingScr
         </div>
 
         {/* Upload Card */}
-        <div className="bg-card border border-border rounded-lg p-8 shadow-2xl">
+        <div className="bg-card border border-border rounded-lg p-4 md:p-8 shadow-2xl">
           <div
-            className={`border-2 border-dashed rounded-lg p-12 transition-all ${isDragging
+            className={`border-2 border-dashed rounded-lg p-6 md:p-12 transition-all ${isDragging
               ? 'border-primary bg-primary/5'
               : fileName
                 ? 'border-emerald-500 bg-emerald-500/5'
@@ -98,17 +98,17 @@ export function LandingScreen({ onUploadComplete, isLoading, error }: LandingScr
             <div className="flex flex-col items-center gap-4">
               {fileName ? (
                 <>
-                  <FileCheck className="w-16 h-16 text-[#10B981]" />
+                  <FileCheck className="w-12 h-12 md:w-16 md:h-16 text-[#10B981]" />
                   <div className="text-center">
-                    <p className="text-lg font-medium text-foreground">{fileName}</p>
+                    <p className="text-base md:text-lg font-medium text-foreground">{fileName}</p>
                     <p className="text-sm text-muted-foreground mt-1">File ready for analysis</p>
                   </div>
                 </>
               ) : (
                 <>
-                  <Upload className="w-16 h-16 text-[#64748B]" />
+                  <Upload className="w-12 h-12 md:w-16 md:h-16 text-[#64748B]" />
                   <div className="text-center">
-                    <p className="text-lg font-medium text-foreground mb-1">
+                    <p className="text-base md:text-lg font-medium text-foreground mb-1">
                       Drag and drop CSV file here
                     </p>
                     <p className="text-sm text-muted-foreground">or</p>

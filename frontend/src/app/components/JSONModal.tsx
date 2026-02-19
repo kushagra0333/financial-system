@@ -50,10 +50,10 @@ export function JSONModal({ isOpen, onClose, data, runId }: JSONModalProps) {
       />
 
       {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="bg-[#1E293B] border border-[#334155] rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-2 md:p-4">
+        <div className="bg-[#1E293B] border border-[#334155] rounded-lg shadow-2xl w-full max-w-4xl max-h-[95vh] md:max-h-[90vh] flex flex-col">
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-[#334155]">
+          <div className="flex items-center justify-between px-4 md:px-6 py-4 border-b border-[#334155]">
             <div>
               <h2 className="text-xl font-semibold text-white">Analysis Results (JSON)</h2>
               <p className="text-sm text-[#94A3B8] mt-1">Export complete analysis data</p>
@@ -67,7 +67,7 @@ export function JSONModal({ isOpen, onClose, data, runId }: JSONModalProps) {
           </div>
 
           {/* JSON Content */}
-          <div className="flex-1 overflow-auto p-6">
+          <div className="flex-1 overflow-auto p-4 md:p-6">
             <div className="bg-[#0F172A] border border-[#334155] rounded-lg p-4 font-mono text-sm">
               <pre className="text-[#94A3B8] whitespace-pre-wrap break-words">
                 {jsonString}
@@ -76,32 +76,32 @@ export function JSONModal({ isOpen, onClose, data, runId }: JSONModalProps) {
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between px-6 py-4 border-t border-[#334155]">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 md:px-6 py-4 border-t border-[#334155] gap-4">
             <div className="text-xs text-[#64748B]">
               Total size: {new Blob([jsonString]).size} bytes
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-2 w-full sm:w-auto">
               <Button
                 onClick={handleCopy}
-                className="bg-[#334155] hover:bg-[#475569] text-white gap-2"
+                className="bg-[#334155] hover:bg-[#475569] text-white gap-2 flex-1 sm:flex-none h-9 text-xs"
               >
                 {copied ? (
                   <>
-                    <Check className="w-4 h-4" />
+                    <Check className="w-3.5 h-3.5" />
                     Copied!
                   </>
                 ) : (
                   <>
-                    <Copy className="w-4 h-4" />
-                    Copy to Clipboard
+                    <Copy className="w-3.5 h-3.5" />
+                    Copy
                   </>
                 )}
               </Button>
               <Button
                 onClick={handleDownload}
-                className="bg-[#3B82F6] hover:bg-[#2563EB] text-white gap-2"
+                className="bg-[#3B82F6] hover:bg-[#2563EB] text-white gap-2 flex-1 sm:flex-none h-9 text-xs"
               >
-                <Download className="w-4 h-4" />
+                <Download className="w-3.5 h-3.5" />
                 Download JSON
               </Button>
             </div>

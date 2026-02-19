@@ -11,7 +11,9 @@ export interface SuspiciousAccount {
     detected_patterns: string[];
     total_transactions: number;
     fan_in: number;
+    fan_in_count: number;
     fan_out: number;
+    fan_out_count: number;
     ring_id?: string;
     score_breakdown?: { reason: string; points: number }[];
 }
