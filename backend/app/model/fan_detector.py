@@ -68,30 +68,40 @@ def _check_fan_condition(transactions):
 
 def calculate_fan_counts(G: nx.DiGraph):
     """
-    Calculates the maximum number of distinct partners in any 72h window for all nodes.
+    Calculates fan counts and amount stats.
     Returns:
-        fan_in_counts (dict): {node_id: int}
-        fan_out_counts (dict): {node_id: int}
+        fan_in_counts (dict)
+        fan_out_counts (dict)
+        fan_in_amounts (dict): Total amount received
+        fan_out_amounts (dict): Total amount sent
     """
     fan_in_counts = {}
     fan_out_counts = {}
+    fan_in_amounts = {}
+    fan_out_amounts = {}
     
     for node in G.nodes():
         # Fan-in
         incoming_txs = []
+        total_in = 0
         for sender in G.predecessors(node):
             for tx in G[sender][node]['transactions']:
                 incoming_txs.append({'partner': sender, 'ts': tx['timestamp']})
+                total_in += tx['amount']
         fan_in_counts[node] = _get_max_window_count(incoming_txs)
+        fan_in_amounts[node] = total_in
         
         # Fan-out
         outgoing_txs = []
+        total_out = 0
         for receiver in G.successors(node):
             for tx in G[node][receiver]['transactions']:
                 outgoing_txs.append({'partner': receiver, 'ts': tx['timestamp']})
+                total_out += tx['amount']
         fan_out_counts[node] = _get_max_window_count(outgoing_txs)
+        fan_out_amounts[node] = total_out
         
-    return fan_in_counts, fan_out_counts
+    return fan_in_counts, fan_out_counts, fan_in_amounts, fan_out_amounts
 
 def _get_max_window_count(transactions):
     if not transactions:

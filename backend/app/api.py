@@ -134,13 +134,14 @@ async def get_ring_details(ring_id: str):
     if not target_ring:
         raise HTTPException(status_code=404, detail="Ring not found")
         
-    # Get 1-hop neighbors
+    # Get only ring members
     members = set(target_ring['member_accounts'])
     subgraph_nodes = set(members)
-    for m in members:
-        if m in G:
-            subgraph_nodes.update(G.predecessors(m))
-            subgraph_nodes.update(G.successors(m))
+    # User requested only ring members, so we do NOT add neighbors
+    # for m in members:
+    #     if m in G:
+    #         subgraph_nodes.update(G.predecessors(m))
+    #         subgraph_nodes.update(G.successors(m))
             
     # Build response
     nodes = []
@@ -191,5 +192,62 @@ async def get_ring_details(ring_id: str):
         "riskScore": target_ring['risk_score'],
         "nodes": nodes,
         "edges": edges
+    }
+
+@router.get("/account/{account_id}")
+async def get_account_details(account_id: str):
+    if 'G' not in LATEST_DATA:
+         raise HTTPException(status_code=404, detail="No data loaded. Please upload a file first.")
+         
+    G = LATEST_DATA['G']
+    scores = LATEST_DATA.get('scores', {})
+    
+    if account_id not in G:
+        raise HTTPException(status_code=404, detail="Account not found")
+        
+    # Get Score Data
+    score_info = scores.get(account_id)
+    if not score_info:
+        # Should not happen if in G, but handle safely
+        score_info = {
+            "suspicion_score": 0,
+            "score_breakdown": [],
+            "detected_patterns": []
+        }
+        
+    # Get Transactions (In and Out)
+    transactions = []
+    
+    # Incoming
+    for pred in G.predecessors(account_id):
+        for tx in G[pred][account_id]['transactions']:
+            transactions.append({
+                "id": tx['transaction_id'],
+                "date": tx['timestamp'].strftime('%Y-%m-%d %H:%M'),
+                "counterparty": pred,
+                "type": "Incoming",
+                "amount": tx['amount']
+            })
+            
+    # Outgoing
+    for succ in G.successors(account_id):
+        for tx in G[account_id][succ]['transactions']:
+            transactions.append({
+                "id": tx['transaction_id'],
+                "date": tx['timestamp'].strftime('%Y-%m-%d %H:%M'),
+                "counterparty": succ,
+                "type": "Outgoing",
+                "amount": tx['amount']
+            })
+            
+    # Sort by date desc
+    transactions.sort(key=lambda x: x['date'], reverse=True)
+    
+    return {
+        "accountId": account_id,
+        "suspicionScore": score_info.get('suspicion_score', 0),
+        "scoreBreakdown": score_info.get('score_breakdown', []),
+        "detectedPatterns": score_info.get('detected_patterns', []),
+        "recentTransactions": transactions[:50] # Limit to 50 recent
     }
 

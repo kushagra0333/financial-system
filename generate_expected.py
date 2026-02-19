@@ -12,7 +12,7 @@ from app.model.scoring import analyze_graph
 from app.model.json_formatter import format_output
 
 def generate():
-    csv_path = 'sample_data/sample_transactions.csv'
+    csv_path = 'database/extended_mixed_1000_plus.csv'
     if not os.path.exists(csv_path):
         print(f"File not found: {csv_path}")
         return

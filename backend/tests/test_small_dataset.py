@@ -45,7 +45,7 @@ T15,P,Q,5.00,2026-02-04 12:00:00
     # Check individual suspicions
     a_susp = next((s for s in suspicious if s['account_id'] == 'A'), None)
     assert a_susp is not None
-    assert 'cycle_length_3' in a_susp['detected_patterns']
+    assert 'cycle_length_3_5' in a_susp['detected_patterns']
     # Score: Cycle (40) + Length 3 (10) = 50.
     assert a_susp['suspicion_score'] == 50.00
 

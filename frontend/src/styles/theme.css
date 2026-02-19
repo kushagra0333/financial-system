@@ -2,26 +2,27 @@
 
 :root {
   --font-size: 16px;
-  --background: #0B1220;
-  --foreground: #F1F5F9;
-  --card: #1E293B;
-  --card-foreground: #F1F5F9;
-  --popover: #1E293B;
-  --popover-foreground: #F1F5F9;
+  /* Light Mode Defaults */
+  --background: #FFFFFF;
+  --foreground: #0F172A;
+  --card: #FFFFFF;
+  --card-foreground: #0F172A;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F172A;
   --primary: #3B82F6;
   --primary-foreground: #FFFFFF;
-  --secondary: #334155;
-  --secondary-foreground: #F1F5F9;
-  --muted: #1E293B;
-  --muted-foreground: #94A3B8;
-  --accent: #3B82F6;
-  --accent-foreground: #FFFFFF;
+  --secondary: #F1F5F9;
+  --secondary-foreground: #0F172A;
+  --muted: #F1F5F9;
+  --muted-foreground: #64748B;
+  --accent: #F1F5F9;
+  --accent-foreground: #0F172A;
   --destructive: #EF4444;
   --destructive-foreground: #FFFFFF;
-  --border: #334155;
-  --input: #334155;
-  --input-background: #1E293B;
-  --switch-background: #334155;
+  --border: #E2E8F0;
+  --input: #E2E8F0;
+  --input-background: #FFFFFF;
+  --switch-background: #E2E8F0;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
   --ring: #3B82F6;
@@ -31,21 +32,21 @@
   --chart-4: #EF4444;
   --chart-5: #8B5CF6;
   --radius: 0.5rem;
-  --sidebar: #0F172A;
-  --sidebar-foreground: #F1F5F9;
+  --sidebar: #F8FAFC;
+  --sidebar-foreground: #0F172A;
   --sidebar-primary: #3B82F6;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #1E293B;
-  --sidebar-accent-foreground: #F1F5F9;
-  --sidebar-border: #334155;
+  --sidebar-accent: #F1F5F9;
+  --sidebar-accent-foreground: #0F172A;
+  --sidebar-border: #E2E8F0;
   --sidebar-ring: #3B82F6;
-  
+
   /* Custom colors for RIFT platform */
   --color-suspicious: #EF4444;
   --color-fraud-ring: #F59E0B;
   --color-normal: #64748B;
-  --color-background-deep: #0B1220;
-  --color-card-elevated: #1E293B;
+  --color-background-deep: #F8FAFC;
+  --color-card-elevated: #FFFFFF;
 }
 
 .dark {
@@ -67,6 +68,8 @@
   --destructive-foreground: #FFFFFF;
   --border: #334155;
   --input: #334155;
+  --input-background: #1E293B;
+  --switch-background: #334155;
   --ring: #3B82F6;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
@@ -83,6 +86,9 @@
   --sidebar-accent-foreground: #F1F5F9;
   --sidebar-border: #334155;
   --sidebar-ring: #3B82F6;
+
+  --color-background-deep: #0B1220;
+  --color-card-elevated: #1E293B;
 }
 
 @theme inline {
@@ -124,6 +130,9 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Custom aliases */
+  --color-background-deep: var(--color-background-deep);
 }
 
 @layer base {

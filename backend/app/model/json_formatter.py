@@ -12,7 +12,7 @@ def format_output(suspicious_accounts, fraud_rings, summary_stats):
         accounts.append({
             "account_id": acc['account_id'],
             "suspicion_score": acc['suspicion_score'],
-            "detected_patterns": sorted(list(acc['detected_patterns'])), # Keep raw snake_case or whatever is in there, maybe sort? Protocol says "cycle_length_3"
+            "detected_patterns": sorted(list(acc['detected_patterns'])), # Keep raw snake_case or whatever is in there, maybe sort? Protocol says "cycle_length_3_5"
             "ring_id": acc.get('ring_id'),
             # Extra fields from your current impl, keep them? User example has ring_id key in account
         })
@@ -37,12 +37,8 @@ def format_output(suspicious_accounts, fraud_rings, summary_stats):
         formatted_accounts.append({
             "account_id": acc['account_id'],
             "suspicion_score": acc['suspicion_score'],
-            "detected_patterns": acc['detected_patterns'], # raw list
-            "ring_id": acc.get('ring_id'),
-            # preserving these as they are useful for the UI table
-            "total_transactions": acc.get('total_transactions', 0),
-            "fan_in": acc.get('fan_in_count', 0),
-            "fan_out": acc.get('fan_out_count', 0)
+            "detected_patterns": sorted(list(acc['detected_patterns'])),
+            "ring_id": acc.get('ring_id')
         })
 
     # Transform rings

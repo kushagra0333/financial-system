@@ -13,6 +13,7 @@ export interface SuspiciousAccount {
     fan_in: number;
     fan_out: number;
     ring_id?: string;
+    score_breakdown?: { reason: string; points: number }[];
 }
 
 export interface AnalysisSummary {

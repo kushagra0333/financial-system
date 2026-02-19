@@ -16,29 +16,36 @@
   stroke-width: 2;
 }
 
+/* React Flow dark/light theme customization */
 .react-flow__controls {
-  background: #1E293B !important;
-  border: 1px solid #334155 !important;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  border-radius: var(--radius);
 }
 
 .react-flow__controls button {
-  background: #1E293B !important;
-  border-bottom: 1px solid #334155 !important;
-  color: #94A3B8 !important;
+  background-color: var(--card);
+  border-bottom: 1px solid var(--border);
+  color: var(--muted-foreground);
+  fill: var(--muted-foreground);
 }
 
 .react-flow__controls button:hover {
-  background: #334155 !important;
-  color: #F1F5F9 !important;
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+  fill: var(--accent-foreground);
 }
 
 .react-flow__minimap {
-  background: #1E293B !important;
-  border: 1px solid #334155 !important;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
 
 .react-flow__background {
-  background-color: #0B1220;
+  /* Handled by component prop, but set default just in case */
+  background-color: transparent;
 }
 
 .react-flow__attribution {
@@ -47,10 +54,13 @@
 
 /* Custom animations */
 @keyframes pulse-glow {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
     box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
   }
+
   50% {
     opacity: 0.8;
     box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);

@@ -68,7 +68,7 @@ export default function App() {
   };
 
   return (
-    <div className="dark">
+    <div>
       {currentScreen === "landing" && (
         <LandingScreen onUploadComplete={handleUpload} isLoading={isLoading} error={error} />
       )}

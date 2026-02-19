@@ -13,7 +13,7 @@ def analyze_graph(G: nx.DiGraph, df):
     # 1. Detect Patterns
     cycles = detect_cycles(G)
     fan_in_nodes, fan_out_nodes = detect_fan_patterns(G)
-    fan_in_counts, fan_out_counts = calculate_fan_counts(G)
+    fan_in_counts, fan_out_counts, fan_in_amounts, fan_out_amounts = calculate_fan_counts(G)
     high_velocity = detect_high_velocity(G)
     shell_chains = detect_shell_chains(G, df) # Returns list of dicts with members
     
@@ -46,10 +46,10 @@ def analyze_graph(G: nx.DiGraph, df):
         
         for node in cycle:
             account_info[node]['in_cycle'] = True
-            if len(cycle) == 3:
-                account_info[node]['patterns'].add('cycle_length_3')
+            if 3 <= len(cycle) <= 5:
+                account_info[node]['patterns'].add('cycle_length_3_5')
             else:
-                account_info[node]['patterns'].add('cycle') # Generic or specific? Prompt says "cycle_length_3" is a token. others implicitly
+                account_info[node]['patterns'].add('cycle') # Should not happen given detector limits
             account_info[node]['rings'].append(rid)
 
     # Process Fan In/Out
@@ -113,6 +113,7 @@ def analyze_graph(G: nx.DiGraph, df):
 
     # 3. Calculate Scores
     scores = {}
+    scores_breakdown = {}
     
     # Pre-calc durations for reduction rule
     node_durations = {}
@@ -133,29 +134,121 @@ def analyze_graph(G: nx.DiGraph, df):
     
     for node in G.nodes():
         score = 0
+        breakdown = [] # List of {"reason": str, "points": float}
         pats = account_info[node]['patterns']
         
         in_cycle = account_info[node]['in_cycle']
         
+        # --- Volume & Flow Analysis ---
+        in_amt = fan_in_amounts.get(node, 0)
+        out_amt = fan_out_amounts.get(node, 0)
+        total_vol = in_amt + out_amt
+        
+        # Volume Score: Logarithmic scale
+        vol_score = 0
+        if total_vol > 0:
+            vol_score = min(20, math.log10(total_vol) * 2)
+        
+        # Flow Ratio
+        if in_amt > 0:
+            flow_ratio = out_amt / in_amt
+        else:
+            flow_ratio = 999.0 # High value if no input
+            
+        is_pass_through = 0.9 <= flow_ratio <= 1.1
+        is_merchant_like = flow_ratio < 0.1 and in_amt > 1000
+        is_payroll_like = flow_ratio > 10.0 and out_amt > 1000
+        
+        # --- Scoring Logic ---
+        
+        # Base Pattern Scores
         if in_cycle:
-            score += 40
-            if 'cycle_length_3' in pats:
-                score += 10
+            points = 50
+            score += points
+            breakdown.append({"reason": "In Cycle", "points": points})
+            if 'cycle_length_3_5' in pats:
+                points = 15
+                score += points
+                breakdown.append({"reason": "Short Cycle (3-5 hops)", "points": points})
         
-        if 'fan_in' in pats: score += 25
-        if 'fan_out' in pats: score += 25
-        if 'shell' in pats: score += 20
-        if 'high_velocity' in pats: score += 15
+        if 'fan_in' in pats:
+            if is_merchant_like:
+                points = 5
+                score += points
+                breakdown.append({"reason": "Fan In (Merchant-like)", "points": points})
+            elif is_pass_through:
+                points = 40
+                score += points
+                breakdown.append({"reason": "Fan In (Pass-through)", "points": points})
+            else:
+                points = 25
+                score += points
+                breakdown.append({"reason": "Fan In Pattern", "points": points})
+                
+        if 'fan_out' in pats:
+            if is_payroll_like:
+                points = 5
+                score += points
+                breakdown.append({"reason": "Fan Out (Payroll-like)", "points": points})
+            elif is_pass_through:
+                points = 40
+                score += points
+                breakdown.append({"reason": "Fan Out (Pass-through)", "points": points})
+            else:
+                points = 25
+                score += points
+                breakdown.append({"reason": "Fan Out Pattern", "points": points})
+                
+        if 'shell' in pats: 
+            points = 30
+            score += points
+            breakdown.append({"reason": "Shell Chain Member", "points": points})
+            if is_pass_through:
+                points = 10
+                score += points
+                breakdown.append({"reason": "Shell Pass-through", "points": points})
+            
+        if 'high_velocity' in pats: 
+            points = 15
+            score += points
+            breakdown.append({"reason": "High Velocity", "points": points})
         
-        # Reduction Rule
+        # Add Volume Score if suspicious
+        if score > 20: 
+            score += vol_score
+            breakdown.append({"reason": f"High Volume (${total_vol:,.0f})", "points": round(vol_score, 1)})
+            
+        # Specific Pattern Boosts
+        if is_pass_through and (in_cycle or 'shell' in pats):
+            points = 10
+            score += points
+            breakdown.append({"reason": "Confirmed Mule Behavior", "points": points})
+            
+        # Reduction Rules
         is_temporal = ('fan_in' in pats) or ('fan_out' in pats) or ('high_velocity' in pats)
         
         if (not in_cycle) and (not is_temporal):
              if node_durations[node] > timedelta(days=7):
-                 score -= 30
+                 points = -30
+                 score += points
+                 breakdown.append({"reason": "Long Duration (>7 days)", "points": points})
+        
+        # Strong Dampener for Legitimate looking high volume
+        if is_merchant_like and not in_cycle:
+            if score > 40:
+                deduction = score - 40
+                score = 40
+                breakdown.append({"reason": "Merchant Trust Cap", "points": -deduction})
+                
+        if is_payroll_like and not in_cycle:
+            if score > 40:
+                deduction = score - 40
+                score = 40
+                breakdown.append({"reason": "Payroll Trust Cap", "points": -deduction})
                  
         score = max(0, min(100, score))
         scores[node] = score
+        scores_breakdown[node] = breakdown
         
     # 4. Compute Ring Scores
     final_fraud_rings = []
@@ -163,12 +256,16 @@ def analyze_graph(G: nx.DiGraph, df):
     for r in all_rings:
         members = r['member_accounts']
         member_scores = [scores[m] for m in members]
-        if not member_scores:
-            avg_score = 0
-        else:
-            avg_score = sum(member_scores) / len(member_scores)
         
-        r['risk_score'] = round(avg_score, 2)
+        if not member_scores:
+            risk_score = 0
+        else:
+            # Weighted Ring Scoring: Max score has 50% weight, Avg score has 50%
+            max_s = max(member_scores)
+            avg_s = sum(member_scores) / len(member_scores)
+            risk_score = (max_s * 0.6) + (avg_s * 0.4)
+        
+        r['risk_score'] = round(risk_score, 2)
         final_fraud_rings.append(r)
         
     # 5. Finalize Suspicious Accounts
@@ -182,16 +279,23 @@ def analyze_graph(G: nx.DiGraph, df):
                 # Find ring with max risk_score
                 candidate_rings = []
                 for rid in my_rings:
-                     robj = next(r for r in final_fraud_rings if r['ring_id'] == rid)
-                     candidate_rings.append(robj)
+                     try:
+                        robj = next(r for r in final_fraud_rings if r['ring_id'] == rid)
+                        candidate_rings.append(robj)
+                     except StopIteration:
+                        pass
                 
-                # Sort by risk_score desc, then ring_id asc
-                candidate_rings.sort(key=lambda x: (-x['risk_score'], x['ring_id']))
-                best_rid = candidate_rings[0]['ring_id']
+                if candidate_rings:
+                    # Sort by risk_score desc, then ring_id asc
+                    candidate_rings.sort(key=lambda x: (-x['risk_score'], x['ring_id']))
+                    best_rid = candidate_rings[0]['ring_id']
+                else:
+                    best_rid = None
 
             suspicious_list.append({
                 "account_id": node,
                 "suspicion_score": float(f"{score:.2f}"),
+                "score_breakdown": scores_breakdown[node],
                 "detected_patterns": sorted(list(account_info[node]['patterns'])),
                 "ring_id": best_rid,
                 "total_transactions": G.degree(node),

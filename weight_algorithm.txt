@@ -1,0 +1,81 @@
+# Money Muling Detection Scoring Algorithm Documentation
+
+This document outlines the weight distribution and processing logic used by the Financial Forensics Engine to detect and score suspicious accounts and fraud rings.
+
+## 1. Overview
+The scoring system assigns a "Suspicion Score" (0-100) to each account based on its participation in known money muling patterns, transactional behavior, and network structure. Accounts are then grouped into "Fraud Rings," which are assigned a "Risk Score" based on the scores of their members.
+
+## 2. Account Scoring Logic
+Each account starts with a **Base Score of 0**. Points are added based on detected patterns and modified by transactional attributes.
+
+### A. Pattern Detection & Base Weights
+Accounts involved in specific graph patterns receive the following base points:
+
+1.  **Cycles (Circular Flow)**
+    *   **Base Weight:** +50 points
+    *   *Logic:* Money returning to the originator is a strong indicator of mule activity.
+```text
+    *   **Modifier:** If the cycle length is between 3 and 5: **+15 points**.
+```
+
+2.  **Fan-In (Many-to-One)**
+    *   **Standard Weight:** +25 points
+    *   *Logic:* Multiple accounts sending money to a single account.
+    *   **Modifiers (based on Flow Ratio):**
+        *   **Merchant-Like Behavior:** If Flow Ratio (Out/In) < 0.1 and In-Amount > 1000: **+5 points** (Low risk, likely a business).
+        *   **Pass-Through (Mule Aggregator):** If Flow Ratio is between 0.9 and 1.1: **+40 points** (High risk, money comes in and immediately goes out).
+
+3.  **Fan-Out (One-to-Many)**
+    *   **Standard Weight:** +25 points
+    *   *Logic:* Single account dispersing money to multiple accounts.
+    *   **Modifiers (based on Flow Ratio):**
+        *   **Payroll-Like Behavior:** If Flow Ratio > 10.0 and Out-Amount > 1000: **+5 points** (Low risk, likely paying salaries).
+        *   **Pass-Through (Mule Distributor):** If Flow Ratio is between 0.9 and 1.1: **+40 points** (High risk, money comes in and immediately goes out).
+
+4.  **Shell Chains (Layering)**
+    *   **Base Weight:** +30 points
+    *   *Logic:* Long chains of single transactions designed to layer funds.
+    *   **Modifier:** If the account acts as a pass-through node (Flow Ratio ~1.0): **+10 points** (Strong shell indicator).
+
+5.  **High Velocity**
+    *   **Base Weight:** +15 points
+    *   *Logic:* Rapid movement of funds.
+
+### B. Volume Scoring (Logarithmic Boots)
+If an account's base score exceeds **20**, a volume boost is applied to prioritize high-value threats.
+*   **Formula:** `min(20, log10(Total Volume) * 2)`
+*   *Maximum Boost:* +20 points.
+*   *Logic:* Larger amounts of money moving through a suspicious network increase the risk level.
+
+### C. Combinational Boosts
+*   **Mule Behavior Confirmed:** If an account is a **Pass-Through** node AND involved in a **Cycle** or **Shell Chain**: **+10 points**.
+
+### D. Dampeners & Reductions (False Positive Reduction)
+1.  **Temporal Check:** If an account is NOT in a cycle and the transaction spread is > 7 days: **-30 points** (Slow movement is less likely to be muling).
+2.  **Legitimate Business Cap:**
+    *   If identified as **Merchant-Like** or **Payroll-Like** and NOT in a cycle, the final score is capped at **40 points**.
+
+### E. Final Account Score
+The calculated score is clamped between **0 and 100**.
+
+---
+
+## 3. Fraud Ring Risk Scoring
+Once accounts are grouped into rings (Networks), the ring is assigned a **Risk Score**.
+
+*   **Formula:** `(Max Member Score * 0.6) + (Average Member Score * 0.4)`
+*   *Logic:* The risk of a ring is heavily influenced by its most suspicious member (60% weight), but the overall network quality also matters (40% weight).
+
+## 4. Processing Flow
+1.  **Graph Construction:** Transactions are built into a directed graph.
+2.  **Pattern Extraction:** Algorithms detect Cycles, Fan-In/Out, Shell Chains, and High Velocity nodes.
+3.  **Metadata Building:** Each account is tagged with the patterns it belongs to.
+4.  **Scoring Calculation:**
+    *   Iterate through all accounts.
+    *   Apply base weights per pattern.
+    *   Calculate Flow Ratios (Out/In) to determine node behavior (Merchant vs. Mule vs. Payroll).
+    *   Apply volume boosts and combinational bonuses.
+    *   Apply reductions and legitimate caps.
+    *   Clamp score 0-100.
+5.  **Ring Analysis:** Group accounts into rings and calculate the weighted Ring Risk Score.
+6.  **Ranking:** Sort accounts and rings by score to prioritize the dashboard view.
