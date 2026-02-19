@@ -6,14 +6,14 @@ import type { AnalysisData } from "./types";
 interface JSONModalProps {
   isOpen: boolean;
   onClose: () => void;
-  data: AnalysisData;
+  data: AnalysisData | null;
   runId: string | null;
 }
 
 export function JSONModal({ isOpen, onClose, data, runId }: JSONModalProps) {
   const [copied, setCopied] = useState(false);
 
-  if (!isOpen) return null;
+  if (!isOpen || !data) return null;
 
   const jsonString = JSON.stringify(data, null, 2);
 

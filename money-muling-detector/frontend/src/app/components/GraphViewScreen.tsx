@@ -272,7 +272,7 @@ export function GraphViewScreen({ ring, onBack }: GraphViewScreenProps) {
               <div className="bg-[#1E293B] border border-[#334155] rounded-lg p-4 mb-4">
                 <p className="text-xs text-[#94A3B8] mb-3">Detected Patterns</p>
                 <div className="flex flex-wrap gap-2">
-                  {selectedAccountData.patterns.map((pattern, idx) => (
+                  {selectedAccountData.patterns.map((pattern: string, idx: number) => (
                     <Badge
                       key={idx}
                       className="bg-[#F59E0B]/20 text-[#F59E0B] border-[#F59E0B]/30"
