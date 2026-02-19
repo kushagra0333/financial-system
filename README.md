@@ -108,6 +108,35 @@ Scores are cumulative and capped at **100**.
 
 ---
 
+## Deployment with Docker (Monolithic)
+
+The easiest way to deploy the entire application (frontend + backend) is using the monolithic root Dockerfile. This is ideal for platforms like Render, Railway, or AWS.
+
+1.  **Build the Image**:
+    ```bash
+    docker build -t rift-forensics .
+    ```
+2.  **Run the Container**:
+    ```bash
+    docker run -p 8000:8000 rift-forensics
+    ```
+3.  **Access the App**: Open `http://localhost:8000` in your browser.
+
+---
+
+## Alternative: Docker Compose (Development)
+If you prefer running services separately (e.g., for local development with hot-reloading):
+
+1.  **Start Services**:
+    ```bash
+    docker-compose up --build
+    ```
+2.  **Access**:
+    - Frontend: `http://localhost`
+    - Backend API: `http://localhost:8000`
+
+---
+
 ## Known Limitations
 - Graph visualization is optimized for up to 2,000 nodes; performance may degrade beyond this without clustering.
 - Real-time streaming ingestion is currently not supported (batch processing only).
