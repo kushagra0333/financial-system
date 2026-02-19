@@ -206,14 +206,14 @@ export function DashboardScreen({ data, onViewRing, onDownloadJSON, currentView,
             </div>
 
             {/* Top Suspicious Accounts */}
-            <div className="bg-card border border-border rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col h-[500px]">
+            <div className="bg-card border border-border rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col h-fit">
               <div className="p-6 border-b border-border">
                 <h2 className="text-xl font-bold flex items-center gap-2">
                   <AlertTriangle className="w-5 h-5 text-destructive" />
                   Top Suspicious Accounts
                 </h2>
               </div>
-              <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              <div className="flex-1 p-4 space-y-3">
                 {data.suspicious_accounts.slice(0, 10).map((acc) => (
                   <div
                     key={acc.account_id}
