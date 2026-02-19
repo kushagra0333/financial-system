@@ -1,8 +1,7 @@
 import { Activity, AlertTriangle, Network, Clock, Eye, Download, BarChart3, Shield } from "lucide-react";
 import { Button } from "./ui/button";
-import { Progress } from "./ui/progress";
 import { Badge } from "./ui/badge";
-import type { AnalysisData, FraudRing, SuspiciousAccount } from "./types";
+import type { AnalysisData } from "./types";
 
 interface DashboardScreenProps {
   data: AnalysisData;
@@ -58,8 +57,8 @@ export function DashboardScreen({ data, onViewRing, onDownloadJSON, currentView,
             <button
               onClick={() => onChangeView('dashboard')}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentView === 'dashboard'
-                  ? 'bg-[#3B82F6] text-white'
-                  : 'text-[#94A3B8] hover:bg-[#1E293B] hover:text-white'
+                ? 'bg-[#3B82F6] text-white'
+                : 'text-[#94A3B8] hover:bg-[#1E293B] hover:text-white'
                 }`}
             >
               <BarChart3 className="w-5 h-5" />
@@ -68,8 +67,8 @@ export function DashboardScreen({ data, onViewRing, onDownloadJSON, currentView,
             <button
               onClick={() => onChangeView('rings')}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentView === 'rings'
-                  ? 'bg-[#3B82F6] text-white'
-                  : 'text-[#94A3B8] hover:bg-[#1E293B] hover:text-white'
+                ? 'bg-[#3B82F6] text-white'
+                : 'text-[#94A3B8] hover:bg-[#1E293B] hover:text-white'
                 }`}
             >
               <Network className="w-5 h-5" />
@@ -78,8 +77,8 @@ export function DashboardScreen({ data, onViewRing, onDownloadJSON, currentView,
             <button
               onClick={() => onChangeView('accounts')}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentView === 'accounts'
-                  ? 'bg-[#3B82F6] text-white'
-                  : 'text-[#94A3B8] hover:bg-[#1E293B] hover:text-white'
+                ? 'bg-[#3B82F6] text-white'
+                : 'text-[#94A3B8] hover:bg-[#1E293B] hover:text-white'
                 }`}
             >
               <AlertTriangle className="w-5 h-5" />
@@ -105,7 +104,7 @@ export function DashboardScreen({ data, onViewRing, onDownloadJSON, currentView,
                 </div>
               </div>
               <p className="text-3xl font-semibold text-white mb-1">
-                {data.totalAccounts.toLocaleString()}
+                {data.summary.total_accounts_analyzed.toLocaleString()}
               </p>
               <p className="text-sm text-[#94A3B8]">Total Accounts Analyzed</p>
             </div>
@@ -117,7 +116,7 @@ export function DashboardScreen({ data, onViewRing, onDownloadJSON, currentView,
                 </div>
               </div>
               <p className="text-3xl font-semibold text-white mb-1">
-                {data.suspiciousAccounts}
+                {data.summary.suspicious_accounts_flagged}
               </p>
               <p className="text-sm text-[#94A3B8]">Suspicious Accounts Flagged</p>
             </div>
@@ -129,7 +128,7 @@ export function DashboardScreen({ data, onViewRing, onDownloadJSON, currentView,
                 </div>
               </div>
               <p className="text-3xl font-semibold text-white mb-1">
-                {data.fraudRings}
+                {data.summary.fraud_rings_detected}
               </p>
               <p className="text-sm text-[#94A3B8]">Fraud Rings Detected</p>
             </div>
@@ -141,7 +140,7 @@ export function DashboardScreen({ data, onViewRing, onDownloadJSON, currentView,
                 </div>
               </div>
               <p className="text-3xl font-semibold text-white mb-1">
-                {data.processingTime}s
+                {data.summary.processing_time_seconds}s
               </p>
               <p className="text-sm text-[#94A3B8]">Processing Time</p>
             </div>
@@ -157,34 +156,34 @@ export function DashboardScreen({ data, onViewRing, onDownloadJSON, currentView,
               </div>
               <div className="p-6">
                 <div className="space-y-3">
-                  {data.rings.map((ring) => (
+                  {data.fraud_rings.map((ring) => (
                     <div
-                      key={ring.id}
+                      key={ring.ring_id}
                       className="bg-[#0F172A] border border-[#334155] rounded-lg p-4 hover:border-[#3B82F6]/50 transition-all hover:shadow-lg hover:shadow-[#3B82F6]/10 cursor-pointer"
                     >
                       <div className="flex items-center justify-between mb-3">
                         <div>
-                          <p className="font-mono text-sm text-white font-medium">{ring.id}</p>
-                          <p className="text-xs text-[#94A3B8] mt-1">{ring.patternType}</p>
+                          <p className="font-mono text-sm text-white font-medium">{ring.ring_id}</p>
+                          <p className="text-xs text-[#94A3B8] mt-1">{ring.pattern_type}</p>
                         </div>
                         <Badge className="bg-[#F59E0B]/20 text-[#F59E0B] border-[#F59E0B]/30">
-                          {ring.memberCount} members
+                          {ring.member_accounts.length} members
                         </Badge>
                       </div>
                       <div className="mb-3">
                         <div className="flex items-center justify-between text-xs mb-1">
                           <span className="text-[#94A3B8]">Risk Score</span>
-                          <span className="text-white font-medium">{ring.riskScore}%</span>
+                          <span className="text-white font-medium">{ring.risk_score}%</span>
                         </div>
                         <div className="w-full bg-[#1E293B] rounded-full h-2 overflow-hidden">
                           <div
                             className="h-full bg-gradient-to-r from-[#F59E0B] to-[#EF4444] transition-all"
-                            style={{ width: `${ring.riskScore}%` }}
+                            style={{ width: `${ring.risk_score}%` }}
                           />
                         </div>
                       </div>
                       <Button
-                        onClick={() => onViewRing(ring.id)}
+                        onClick={() => onViewRing(ring.ring_id)}
                         className="w-full bg-[#334155] hover:bg-[#475569] text-white h-9 gap-2"
                         size="sm"
                       >
@@ -205,16 +204,16 @@ export function DashboardScreen({ data, onViewRing, onDownloadJSON, currentView,
               </div>
               <div className="p-6">
                 <div className="space-y-3">
-                  {data.accounts.map((account) => (
+                  {data.suspicious_accounts.map((account) => (
                     <div
-                      key={account.id}
+                      key={account.account_id}
                       className="bg-[#0F172A] border border-[#334155] rounded-lg p-4"
                     >
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex-1">
-                          <p className="font-mono text-sm text-white font-medium">{account.id}</p>
+                          <p className="font-mono text-sm text-white font-medium">{account.account_id}</p>
                           <div className="flex flex-wrap gap-1 mt-2">
-                            {account.patterns.map((pattern, idx) => (
+                            {account.detected_patterns.map((pattern, idx) => (
                               <Badge
                                 key={idx}
                                 className="text-xs bg-[#3B82F6]/20 text-[#3B82F6] border-[#3B82F6]/30"
@@ -224,19 +223,19 @@ export function DashboardScreen({ data, onViewRing, onDownloadJSON, currentView,
                             ))}
                           </div>
                         </div>
-                        <Badge className={getSuspicionBadgeColor(account.suspicionScore)}>
-                          {account.suspicionScore}
+                        <Badge className={getSuspicionBadgeColor(account.suspicion_score)}>
+                          {account.suspicion_score}
                         </Badge>
                       </div>
                       <div>
                         <div className="flex items-center justify-between text-xs mb-1">
                           <span className="text-[#94A3B8]">Suspicion Score</span>
-                          <span className="text-white font-medium">{account.suspicionScore}%</span>
+                          <span className="text-white font-medium">{account.suspicion_score}%</span>
                         </div>
                         <div className="w-full bg-[#1E293B] rounded-full h-2 overflow-hidden">
                           <div
-                            className={`h-full ${getSuspicionColor(account.suspicionScore)} transition-all`}
-                            style={{ width: `${account.suspicionScore}%` }}
+                            className={`h-full ${getSuspicionColor(account.suspicion_score)} transition-all`}
+                            style={{ width: `${account.suspicion_score}%` }}
                           />
                         </div>
                       </div>

@@ -33,7 +33,7 @@ export function GraphViewScreen({ ring, onBack }: GraphViewScreenProps) {
   useState(() => {
     const fetchRingDetails = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/ring/${ring.id}`);
+        const res = await fetch(`http://localhost:8000/ring/${ring.ring_id}`);
         if (!res.ok) throw new Error('Failed to fetch ring details');
         const data = await res.json();
 
@@ -49,7 +49,7 @@ export function GraphViewScreen({ ring, onBack }: GraphViewScreenProps) {
 
         // Map nodes and layout
         // Simple circle layout around center
-        const centerId = ring.accounts[0];
+        const centerId = ring.member_accounts[0];
         const otherNodes = data.nodes.filter((n: any) => n.id !== centerId);
 
         const newNodes: Node[] = [];
@@ -162,27 +162,27 @@ export function GraphViewScreen({ ring, onBack }: GraphViewScreenProps) {
             Dashboard
           </button>
           <span className="text-[#64748B]">/</span>
-          <span className="text-white">Fraud Ring {ring.id}</span>
+          <span className="text-white">Fraud Ring {ring.ring_id}</span>
         </div>
         <div className="flex items-center gap-4 mt-3">
           <div>
             <p className="text-xs text-[#94A3B8]">Ring ID</p>
-            <p className="text-sm font-mono text-white">{ring.id}</p>
+            <p className="text-sm font-mono text-white">{ring.ring_id}</p>
           </div>
           <div className="w-px h-10 bg-[#334155]"></div>
           <div>
             <p className="text-xs text-[#94A3B8]">Pattern Type</p>
-            <p className="text-sm text-white">{ring.patternType}</p>
+            <p className="text-sm text-white">{ring.pattern_type}</p>
           </div>
           <div className="w-px h-10 bg-[#334155]"></div>
           <div>
             <p className="text-xs text-[#94A3B8]">Risk Score</p>
-            <p className="text-sm font-semibold text-[#EF4444]">{ring.riskScore}%</p>
+            <p className="text-sm font-semibold text-[#EF4444]">{ring.risk_score}%</p>
           </div>
           <div className="w-px h-10 bg-[#334155]"></div>
           <div>
             <p className="text-xs text-[#94A3B8]">Members</p>
-            <p className="text-sm text-white">{ring.memberCount} accounts</p>
+            <p className="text-sm text-white">{ring.member_accounts.length} accounts</p>
           </div>
         </div>
       </div>
@@ -206,7 +206,7 @@ export function GraphViewScreen({ ring, onBack }: GraphViewScreenProps) {
             <MiniMap
               className="bg-[#1E293B] border border-[#334155] rounded-lg"
               nodeColor={(node) => {
-                if (node.id === ring.accounts[0]) return '#EF4444';
+                if (node.id === ring.member_accounts[0]) return '#EF4444';
                 return '#64748B';
               }}
             />

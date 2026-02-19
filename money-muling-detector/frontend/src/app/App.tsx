@@ -51,7 +51,7 @@ export default function App() {
 
   const handleViewRing = (ringId: string) => {
     if (!analysisData) return;
-    const ring = analysisData.rings.find(r => r.id === ringId);
+    const ring = analysisData.fraud_rings.find(r => r.ring_id === ringId);
     if (ring) {
       setSelectedRing(ring);
       setCurrentScreen("graph");
