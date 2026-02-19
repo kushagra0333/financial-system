@@ -17,6 +17,7 @@ import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import type { FraudRing } from "./types";
 import { useTheme } from "next-themes";
+import { API_BASE_URL } from "../config";
 
 interface GraphViewScreenProps {
   ring: FraudRing;
@@ -36,7 +37,7 @@ export function GraphViewScreen({ ring, onBack }: GraphViewScreenProps) {
   useState(() => {
     const fetchRingDetails = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/ring/${ring.ring_id}`);
+        const res = await fetch(`${API_BASE_URL}/ring/${ring.ring_id}`);
         if (!res.ok) throw new Error('Failed to fetch ring details');
         const data = await res.json();
 
@@ -127,7 +128,7 @@ export function GraphViewScreen({ ring, onBack }: GraphViewScreenProps) {
     fetchRingDetails();
   }); // call once
 
-  const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
+  const onNodeClick = useCallback((_event: React.MouseEvent, node: Node) => {
     setSelectedNode(node.id);
   }, []);
 

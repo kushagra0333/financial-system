@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { X, Shield, AlertTriangle, ArrowRight, ArrowLeft } from "lucide-react";
+import { API_BASE_URL } from "../config";
 
 interface Transaction {
     id: string;
@@ -45,7 +46,7 @@ export function AccountDetailsModal({ accountId, isOpen, onClose }: AccountDetai
         setIsLoading(true);
         setError(null);
         try {
-            const response = await fetch(`http://localhost:8000/account/${id}`);
+            const response = await fetch(`${API_BASE_URL}/account/${id}`);
             if (!response.ok) {
                 throw new Error("Failed to fetch account details");
             }

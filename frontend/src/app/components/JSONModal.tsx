@@ -2,6 +2,7 @@ import { X, Download, Copy, Check } from "lucide-react";
 import { Button } from "./ui/button";
 import { useState } from "react";
 import type { AnalysisData } from "./types";
+import { API_BASE_URL } from "../config";
 
 interface JSONModalProps {
   isOpen: boolean;
@@ -26,7 +27,7 @@ export function JSONModal({ isOpen, onClose, data, runId }: JSONModalProps) {
   const handleDownload = () => {
     if (runId) {
       // Use backend endpoint
-      window.location.href = `http://localhost:8000/download/${runId}`;
+      window.location.href = `${API_BASE_URL}/download/${runId}`;
     } else {
       // Fallback to client-side blob if no runId (unlikely in new flow but safe)
       const blob = new Blob([jsonString], { type: 'application/json' });

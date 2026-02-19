@@ -4,6 +4,7 @@ import { DashboardScreen } from "./components/DashboardScreen";
 import { GraphViewScreen } from "./components/GraphViewScreen";
 import { JSONModal } from "./components/JSONModal";
 import { type AnalysisData, type FraudRing } from "./components/types";
+import { API_BASE_URL } from "./config";
 
 type Screen = "landing" | "dashboard" | "graph";
 
@@ -25,7 +26,7 @@ export default function App() {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch('http://localhost:8000/upload', {
+      const response = await fetch(`${API_BASE_URL}/upload`, {
         method: 'POST',
         body: formData,
       });

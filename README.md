@@ -1,97 +1,120 @@
-# Money Muling Detection Web App
+# RIFT Financial Forensics Engine: Money Muling Ring Detection
 
-## Title
-**Financial Forensics Engine: Money Muling Ring Detection**
+[![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+
+## Project Title
+**RIFT Financial Forensics Engine: Money Muling Ring Detection**
 
 ## Live Demo URL
 [Live Demo Placeholder](https://money-muling-detector.demo-placeholder.com)
 
 ## Tech Stack
-*   **Backend**: Python 3.10+, FastAPI, Uvicorn, Pandas, NetworkX
-*   **Frontend**: React (Vite), Vis-Network, Axios, CSS Modules
-*   **Algorithms**: Deterministic Graph Traversal (DFS/BFS), Sliding Window Analysis
+### Backend
+- **Framework**: [FastAPI](https://fastapi.tiangolo.com/) (Python 3.10+)
+- **Data Processing**: [Pandas](https://pandas.pydata.org/)
+- **Graph Analytics**: [NetworkX](https://networkx.org/)
+- **Server**: [Uvicorn](https://www.uvicorn.org/)
+
+### Frontend
+- **Framework**: [React](https://reactjs.org/) (Vite)
+- **Styling**: [Vanilla CSS](https://developer.mozilla.org/en-US/docs/Web/CSS) & [Tailwind CSS](https://tailwindcss.com/)
+- **Visualization**: [React Flow](https://reactflow.dev/) (formerly Vis-Network)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Theme**: [Next Themes](https://github.com/pacocoursey/next-themes)
+
+---
 
 ## System Architecture
-The system consists of a Python backend service and a React single-page application (SPA).
+The RIFT system architecture is designed for high-performance financial crime detection through a decoupled frontend-backend model:
 
-1.  **Backend**:
-    *   Exposes REST endpoints via FastAPI (`/upload`, `/download`, `/ring`).
-    *   Processes CSV uploads into a directed graph structure.
-    *   Executes deterministic detection algorithms sequentially (Cycles -> Fan-in/out -> Shell Chains).
-    *   Calculates suspicion scores based on weighted pattern detection.
-    *   Returns JSON results matching a strict schema.
+1.  **Ingestion Layer**: Sanitizes and validates CSV transaction data.
+2.  **Graph Engine**: Constructs a directed multi-graph where nodes are accounts and edges are transactions.
+3.  **Detection Layer**: Runs parallelizable deterministic algorithms to identify clusters (Rings).
+4.  **Scoring Engine**: Evaluates individual account risk based on behavioral and structural patterns.
+5.  **Visualization Layer**: An interactive React-based dashboard for exploring detected rings and account flows.
 
-2.  **Frontend**:
-    *   Provides a file upload interface for transaction CSVs.
-    *   Displays real-time analysis summaries and suspicion lists.
-    *   Enables detailed exploration of fraud rings via interactive graph visualization.
-    *   Downloads analysis reports in JSON format.
+---
 
 ## Algorithm Approach (Complexity Analysis)
 
-1.  **Graph Construction**: Builds an adjacency list representation using NetworkX. Time: O(E), Space: O(V+E).
-2.  **Cycle Detection**: Deterministic depth-limited DFS (depth 3-5). Time: O(V * (d^depth)) in worst case, but practically constrained by node degree (d) and time limits. We optimize by canonicalizing cycles to avoid duplicates.
-3.  **Fan-in / Fan-out**: Sliding window (72h) over sorted transaction lists per node. Time: O(E * log E) for sorting + O(E) linear scan per node.
-4.  **Shell Chain Detection**: Identifies paths of length ≥ 3 with low-activity intermediate nodes. Time: O(V_shell * E_shell) using DFS on the subgraph of low-degree nodes.
-5.  **Performance**: Designed to handle 10,000 transactions within 30 seconds by using efficient data structures and non-blocking I/O where possible.
+| Algorithm | Description | Complexity |
+| :--- | :--- | :--- |
+| **Cycle Detection** | Uses depth-limited DFS to find circular fund movements (muling cycles). Canonicalization prevents duplicates. | $O(V \cdot (\text{avg\_degree}^{\text{depth}}))$ |
+| **Fan-In / Fan-Out** | Uses sliding window analysis (72h default) to detect rapid fund consolidation or dispersal. | $O(E \log E + E)$ |
+| **Shell Chain Detection** | Identifies linear paths of low-activity accounts acting as transit points in layering. | $O(V_{\text{shell}} \cdot E_{\text{shell}})$ |
+| **High Velocity** | Monitors bursts of high-frequency transactions from a single account. | $O(E)$ |
+
+**Performance Goal**: Handles up to 10,000 transactions in under 30 seconds through adjacency list optimizations and efficient pruning.
+
+---
 
 ## Suspicion Score Methodology
-Scores are calculated deterministically (capped at 100):
-*   **Base Score**: 0
-*   **Cycle Participation**: +40 points (+10 bonus if cycle length is 3)
-*   **Fan-In / Fan-Out**: +25 points
-*   **Shell Node**: +20 points
-*   **High Velocity**: +15 points
-*   **False Positive Reduction**: -30 points if node is not in a cycle, has no temporal bursts, and activity spans > 7 days.
+Scores are cumulative and capped at **100**.
+
+### Positive Risk Factors
+- **Involvement in Cycle**: +50 points
+- **Short Cycle Bonus (3-5 hops)**: +15 points
+- **Fan-In (Pass-through behavior)**: +40 points
+- **Fan-Out (Pass-through behavior)**: +40 points
+- **Shell Chain Member**: +30 points
+- **High Velocity Burst**: +15 points
+- **High Volume Bonus**: $min(20, 2 \cdot \log_{10}(\text{total\_volume}))$
+
+### Trust & Mitigation Factors
+- **Duration Penalty**: -30 points if account activity spans $>7$ days with no structural structural patterns.
+- **Trust Caps**: Merchant/Payroll-like behavior caps the score at **40** to reduce false positives.
+
+---
 
 ## Installation & Setup
 
 ### Backend
-1.  Navigate to `backend/`:
+1.  Navigate to the backend directory:
     ```bash
-    cd money-muling-detector/backend
+    cd backend
     ```
-2.  Install dependencies:
+2.  Install requirements:
     ```bash
     pip install -r requirements.txt
     ```
-3.  Run tests:
-    ```bash
-    pytest tests/
-    ```
-4.  Start server:
+3.  Start the FastAPI server:
     ```bash
     uvicorn app.main:app --reload
     ```
 
 ### Frontend
-1.  Navigate to `frontend/`:
+1.  Navigate to the frontend directory:
     ```bash
-    cd money-muling-detector/frontend
+    cd frontend
     ```
 2.  Install dependencies:
     ```bash
     npm install
     ```
-3.  Start development server:
+3.  Start the development server:
     ```bash
     npm run dev
     ```
 
-## Usage Instructions
-1.  Open the frontend (default: `http://localhost:5173`).
-2.  Upload a CSV file containing transactions (columns: `transaction_id,sender_id,receiver_id,amount,timestamp`).
-3.  View the summary dashboard and list of suspicious accounts.
-4.  Click on a Ring ID to visualize the transaction graph structure.
-5.  Click "Download JSON" to get the detailed analysis report.
+---
 
-## Deployment Guidelines
-*   **Backend (Render)**: Deploy as a Python Web Service. Set build command `pip install -r requirements.txt` and start command `uvicorn app.main:app --host 0.0.0.0 --port $PORT`. Ensure Python 3.10+ environment.
-*   **Frontend (Vercel)**: Deploy as a Vite project. Override build command: `npm run build`. Output directory: `dist`.
+## Usage Instructions
+1.  **Upload**: Upload a transaction CSV (Required columns: `from_account`, `to_account`, `amount`, `timestamp`).
+2.  **Monitor**: Review the summary dashboard for high-risk accounts and active fraud rings.
+3.  **Explore**: Use the **Graph View** to interactively visualize the flow of funds within specific rings.
+4.  **Export**: Download the full analysis report in JSON format for external auditing.
+
+---
 
 ## Known Limitations
-*   Graph visualization may lag with >2000 simultaneous nodes (optimization: cluster viewing).
-*   Large file uploads (>10MB) depend on network speed and server memory limits.
+- Graph visualization is optimized for up to 2,000 nodes; performance may degrade beyond this without clustering.
+- Real-time streaming ingestion is currently not supported (batch processing only).
+
+---
 
 ## Team Members
-*   Arjav Jain (AI Assistant)
+- **Arjav Jain**
+- **Kushagra Pandey**
+- **Prince Singh**
