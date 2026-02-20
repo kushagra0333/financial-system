@@ -8,6 +8,7 @@ from datetime import datetime
 from .model.graph_builder import build_graph
 from .model.scoring import analyze_graph
 from .model.json_formatter import format_output
+from .model.blockchain import audit_trail
 
 router = APIRouter()
 
@@ -85,16 +86,20 @@ async def upload_file(file: UploadFile = File(...)):
         processing_time = time.time() - start_time
         rounded_time = round(processing_time, 2)
         
+        # Calculate suspicious count based on score > 0 (or some threshold) to maintain metric meaning
+        suspicious_count = sum(1 for acc in suspicious_accounts if acc['suspicion_score'] > 0)
+
         summary = {
             "total_accounts_analyzed": int(G.number_of_nodes()),
-            "suspicious_accounts_flagged": len(suspicious_accounts),
+            "suspicious_accounts_flagged": suspicious_count,
             "fraud_rings_detected": len(fraud_rings),
             "processing_time_seconds": rounded_time
         }
         
+        # 'result' contains EVERYTHING (for Dashboard)
         result = format_output(suspicious_accounts, fraud_rings, summary)
         
-        # Cache result
+        # Cache fully detailed result
         run_id = str(uuid.uuid4())
         RESULTS_CACHE[run_id] = result
         
@@ -104,6 +109,13 @@ async def upload_file(file: UploadFile = File(...)):
         LATEST_DATA['scores'] = {item['account_id']: item for item in suspicious_accounts}
         # Also map ring objects by ID for fast lookup
         LATEST_DATA['rings_map'] = {r['ring_id']: r for r in fraud_rings}
+        
+        # 4. Record in Blockchain (Audit Trail)
+        audit_trail.add_block({
+            "filename": file.filename,
+            "summary": summary,
+            "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        })
         
         return JSONResponse(content=result, headers={"X-Run-ID": run_id})
         
@@ -119,8 +131,23 @@ async def download_json(run_id: str):
     if run_id not in RESULTS_CACHE:
         raise HTTPException(status_code=404, detail="Run ID not found")
         
-    result = RESULTS_CACHE[run_id]
-    return JSONResponse(content=result, media_type="application/json")
+    full_result = RESULTS_CACHE[run_id]
+    
+    # Filter for download: Only suspicious accounts
+    # Creating a deep copy or just a new dictionary with filtered list
+    
+    suspicious_only = [
+        acc for acc in full_result['suspicious_accounts'] 
+        if acc['suspicion_score'] > 0 or acc['ring_id'] is not None
+    ]
+    
+    filtered_result = {
+        "suspicious_accounts": suspicious_only,
+        "fraud_rings": full_result['fraud_rings'],
+        "summary": full_result['summary']
+    }
+    
+    return JSONResponse(content=filtered_result, media_type="application/json")
 
 @router.get("/ring/{ring_id}")
 async def get_ring_details(ring_id: str):
@@ -249,5 +276,13 @@ async def get_account_details(account_id: str):
         "scoreBreakdown": score_info.get('score_breakdown', []),
         "detectedPatterns": score_info.get('detected_patterns', []),
         "recentTransactions": transactions[:50] # Limit to 50 recent
+    }
+
+@router.get("/blockchain")
+async def get_blockchain():
+    return {
+        "chain": audit_trail.to_list(),
+        "is_valid": audit_trail.is_chain_valid(),
+        "length": len(audit_trail.chain)
     }
 

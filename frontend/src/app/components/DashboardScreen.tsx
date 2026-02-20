@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Activity, AlertTriangle, Network, Clock, Eye, Download, BarChart3, Shield, ArrowRight, Menu } from "lucide-react";
+import { Activity, AlertTriangle, Network, Clock, Eye, Download, BarChart3, Shield, ArrowRight, Menu, Lock } from "lucide-react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { ThemeToggle } from "./ThemeToggle";
 import { AccountDetailsModal } from "./AccountDetailsModal";
+import { BlockchainAudit } from "./BlockchainAudit";
 import type { AnalysisData } from "./types";
 
 interface DashboardScreenProps {
@@ -122,7 +123,7 @@ export function DashboardScreen({ data, onViewRing, onDownloadJSON, currentView,
                 }`}
             >
               <AlertTriangle className="w-5 h-5 flex-shrink-0" />
-              <span>Suspicious Accounts</span>
+              <span>Analyzed Accounts</span>
             </button>
             <button
               onClick={() => onChangeView('graph')}
@@ -134,6 +135,17 @@ export function DashboardScreen({ data, onViewRing, onDownloadJSON, currentView,
             >
               <Shield className="w-5 h-5 flex-shrink-0" />
               <span>Graph View</span>
+            </button>
+            <button
+              onClick={() => onChangeView('audit')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-md transition-all duration-200 font-medium text-sm
+                ${currentView === 'audit'
+                  ? 'bg-primary/10 text-primary hover:bg-primary/15'
+                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                }`}
+            >
+              <Lock className="w-5 h-5 flex-shrink-0" />
+              <span>Blockchain Audit</span>
             </button>
           </nav>
         </aside>
@@ -255,7 +267,7 @@ export function DashboardScreen({ data, onViewRing, onDownloadJSON, currentView,
                     <div>
                       <h2 className="text-xl font-bold flex items-center gap-2">
                         <AlertTriangle className="w-5 h-5 text-destructive" />
-                        Top Suspicious Accounts
+                        Top Risk Accounts
                       </h2>
                     </div>
                     <Button variant="ghost" size="sm" onClick={() => onChangeView('accounts')}>
@@ -395,11 +407,11 @@ export function DashboardScreen({ data, onViewRing, onDownloadJSON, currentView,
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-2xl font-bold text-foreground">Suspicious Accounts</h2>
-                  <p className="text-muted-foreground">High-risk accounts flagged by analysis</p>
+                  <h2 className="text-2xl font-bold text-foreground">Analyzed Accounts</h2>
+                  <p className="text-muted-foreground">All accounts processed by the engine</p>
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  Total Flagged: <span className="font-mono font-semibold text-foreground">{data.suspicious_accounts.length}</span>
+                  Total Accounts: <span className="font-mono font-semibold text-foreground">{data.suspicious_accounts.length}</span>
                 </div>
               </div>
 
@@ -505,10 +517,15 @@ export function DashboardScreen({ data, onViewRing, onDownloadJSON, currentView,
                 </Button>
                 <Button variant="outline" onClick={() => onChangeView('accounts')} className="gap-2">
                   <AlertTriangle className="w-4 h-4" />
-                  Browse Suspicious Accounts
+                  Browse Accounts
                 </Button>
               </div>
             </div>
+          )}
+
+          {/* Blockchain Audit View */}
+          {currentView === 'audit' && (
+            <BlockchainAudit />
           )}
         </main>
       </div>
