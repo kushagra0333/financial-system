@@ -1,0 +1,202 @@
+{
+  "suspicious_accounts": [
+    {
+      "account_id": "ACC_00123",
+      "suspicion_score": 35.0,
+      "risk_level": "MED",
+      "reasons": [
+        "activity_gate(total_tx=1,penalty=0.2)",
+        "cycle_centrality(deg=2,size=3)",
+        "low_activity_cap(total_tx=1,score_cap=35)"
+      ],
+      "detected_patterns": [
+        "cycle"
+      ],
+      "ring_id": "RING_001"
+    },
+    {
+      "account_id": "ACC_00234",
+      "suspicion_score": 35.0,
+      "risk_level": "MED",
+      "reasons": [
+        "activity_gate(total_tx=1,penalty=0.2)",
+        "cycle_centrality(deg=2,size=3)",
+        "low_activity_cap(total_tx=1,score_cap=35)"
+      ],
+      "detected_patterns": [
+        "cycle"
+      ],
+      "ring_id": "RING_002"
+    },
+    {
+      "account_id": "ACC_00345",
+      "suspicion_score": 35.0,
+      "risk_level": "MED",
+      "reasons": [
+        "activity_gate(total_tx=1,penalty=0.2)",
+        "cycle_centrality(deg=2,size=3)",
+        "low_activity_cap(total_tx=1,score_cap=35)"
+      ],
+      "detected_patterns": [
+        "cycle"
+      ],
+      "ring_id": "RING_003"
+    },
+    {
+      "account_id": "ACC_00456",
+      "suspicion_score": 35.0,
+      "risk_level": "MED",
+      "reasons": [
+        "activity_gate(total_tx=1,penalty=0.2)",
+        "cycle_centrality(deg=2,size=3)",
+        "low_activity_cap(total_tx=1,score_cap=35)"
+      ],
+      "detected_patterns": [
+        "cycle"
+      ],
+      "ring_id": "RING_001"
+    },
+    {
+      "account_id": "ACC_00567",
+      "suspicion_score": 35.0,
+      "risk_level": "MED",
+      "reasons": [
+        "activity_gate(total_tx=1,penalty=0.2)",
+        "cycle_centrality(deg=2,size=3)",
+        "low_activity_cap(total_tx=1,score_cap=35)"
+      ],
+      "detected_patterns": [
+        "cycle"
+      ],
+      "ring_id": "RING_002"
+    },
+    {
+      "account_id": "ACC_00678",
+      "suspicion_score": 35.0,
+      "risk_level": "MED",
+      "reasons": [
+        "activity_gate(total_tx=1,penalty=0.2)",
+        "cycle_centrality(deg=2,size=3)",
+        "low_activity_cap(total_tx=1,score_cap=35)"
+      ],
+      "detected_patterns": [
+        "cycle"
+      ],
+      "ring_id": "RING_003"
+    },
+    {
+      "account_id": "ACC_00789",
+      "suspicion_score": 35.0,
+      "risk_level": "MED",
+      "reasons": [
+        "activity_gate(total_tx=1,penalty=0.2)",
+        "cycle_centrality(deg=2,size=3)",
+        "low_activity_cap(total_tx=1,score_cap=35)"
+      ],
+      "detected_patterns": [
+        "cycle"
+      ],
+      "ring_id": "RING_001"
+    },
+    {
+      "account_id": "ACC_00890",
+      "suspicion_score": 35.0,
+      "risk_level": "MED",
+      "reasons": [
+        "activity_gate(total_tx=1,penalty=0.2)",
+        "cycle_centrality(deg=2,size=3)",
+        "low_activity_cap(total_tx=1,score_cap=35)"
+      ],
+      "detected_patterns": [
+        "cycle"
+      ],
+      "ring_id": "RING_002"
+    },
+    {
+      "account_id": "ACC_00901",
+      "suspicion_score": 35.0,
+      "risk_level": "MED",
+      "reasons": [
+        "activity_gate(total_tx=1,penalty=0.2)",
+        "cycle_centrality(deg=2,size=3)",
+        "low_activity_cap(total_tx=1,score_cap=35)"
+      ],
+      "detected_patterns": [
+        "cycle"
+      ],
+      "ring_id": "RING_003"
+    },
+    {
+      "account_id": "SMURF_01",
+      "suspicion_score": 16.9,
+      "risk_level": "LOW",
+      "reasons": [
+        "activity_gate(total_tx=0,penalty=0.2)",
+        "fan_in_intensity(in=12)",
+        "low_activity_cap(total_tx=0,score_cap=16.9)"
+      ],
+      "detected_patterns": [
+        "fan_in"
+      ],
+      "ring_id": "RING_004"
+    }
+  ],
+  "fraud_rings": [
+    {
+      "ring_id": "RING_001",
+      "member_accounts": [
+        "ACC_00123",
+        "ACC_00456",
+        "ACC_00789"
+      ],
+      "pattern_type": "cycle",
+      "risk_score": 58.1
+    },
+    {
+      "ring_id": "RING_002",
+      "member_accounts": [
+        "ACC_00234",
+        "ACC_00567",
+        "ACC_00890"
+      ],
+      "pattern_type": "cycle",
+      "risk_score": 58.1
+    },
+    {
+      "ring_id": "RING_003",
+      "member_accounts": [
+        "ACC_00345",
+        "ACC_00678",
+        "ACC_00901"
+      ],
+      "pattern_type": "cycle",
+      "risk_score": 58.1
+    },
+    {
+      "ring_id": "RING_004",
+      "member_accounts": [
+        "ACC_01000",
+        "ACC_01001",
+        "ACC_01002",
+        "ACC_01003",
+        "ACC_01004",
+        "ACC_01005",
+        "ACC_01006",
+        "ACC_01007",
+        "ACC_01008",
+        "ACC_01009",
+        "ACC_01010",
+        "ACC_01011",
+        "SMURF_01"
+      ],
+      "pattern_type": "fan_in",
+      "risk_score": 39.9
+    }
+  ],
+  "summary": {
+    "total_accounts_analyzed": 501,
+    "suspicious_accounts_flagged": 10,
+    "fraud_rings_detected": 4,
+    "processing_time_seconds": 0.0
+  }
+}

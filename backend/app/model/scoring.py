@@ -256,7 +256,8 @@ def analyze_graph(G: nx.DiGraph, df):
 
     # -------------------- FINAL OUTPUT --------------------
     for node, score in scores.items():
-        if score > 0:
+        # Include ALL accounts, even with score 0
+        if True:
 
             my_rings = account_info[node]['rings']
 
@@ -289,21 +290,9 @@ def analyze_graph(G: nx.DiGraph, df):
 
     suspicious_list.sort(key=lambda x: (-x['suspicion_score'], x['account_id']))
 
-    # -------------------- FILTERING FOR CYCLES ONLY --------------------
-    # User Request: "in the backend only send the data which are making the cycle dont send the data without cycles"
+    # -------------------- FILTERING REMOVED --------------------
+    # We now return ALL accounts to the frontend for the dashboard.
+    # The JSON download endpoint will handle filtering for "suspicious only".
     
-    cycle_rings = [r for r in final_fraud_rings if r['pattern_type'] == 'cycle']
-    
-    cycle_suspicious_list = []
-    
-    # We only want accounts that are part of a cycle.
-    # checking account_info[node]['in_cycle'] is the most direct way.
-    
-    for item in suspicious_list:
-        node = item['account_id']
-        if account_info[node]['in_cycle']:
-            # Ensure the ring_id associated is also a cycle ring (it should be if in_cycle is true, but good to be safe)
-             cycle_suspicious_list.append(item)
-
-    return cycle_suspicious_list, cycle_rings
+    return suspicious_list, final_fraud_rings
 
