@@ -10,6 +10,17 @@
 ## Live Demo URL
 [Live Demo Placeholder](https://money-muling-detector.demo-placeholder.com)
 
+## Demo Video
+[![Demo Video](assets/demo.mp4)](assets/demo.mp4)
+
+## Screenshots
+
+### Dashboard Overview
+![Dashboard](assets/dashboard.png)
+
+### Graph Investigation View
+![Graph View](assets/graph_view.png)
+
 ## Tech Stack
 ### Backend
 - **Framework**: [FastAPI](https://fastapi.tiangolo.com/) (Python 3.10+)
