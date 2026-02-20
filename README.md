@@ -11,7 +11,7 @@
 [Live Demo Placeholder](https://money-muling-detector.demo-placeholder.com)
 
 ## Demo Video
-[![Demo Video](assets/demo.mp4)](assets/demo.mp4)
+![Demo Video](assets/demo.mp4)
 
 ## Screenshots
 
@@ -52,10 +52,10 @@ The RIFT system architecture is designed for high-performance financial crime de
 
 | Algorithm | Description | Complexity |
 | :--- | :--- | :--- |
-| **Cycle Detection** | Uses depth-limited DFS to find circular fund movements (muling cycles). Canonicalization prevents duplicates. | $O(V \cdot (\text{avg\_degree}^{\text{depth}}))$ |
-| **Fan-In / Fan-Out** | Uses sliding window analysis (72h default) to detect rapid fund consolidation or dispersal. | $O(E \log E + E)$ |
-| **Shell Chain Detection** | Identifies linear paths of low-activity accounts acting as transit points in layering. | $O(V_{\text{shell}} \cdot E_{\text{shell}})$ |
-| **High Velocity** | Monitors bursts of high-frequency transactions from a single account. | $O(E)$ |
+| **Cycle Detection** | Uses depth-limited DFS to find circular fund movements (muling cycles). Canonicalization prevents duplicates. | `O(V * avg_degree^depth)` |
+| **Fan-In / Fan-Out** | Uses sliding window analysis (72h default) to detect rapid fund consolidation or dispersal. | `O(E * log(E) + E)` |
+| **Shell Chain Detection** | Identifies linear paths of low-activity accounts acting as transit points in layering. | `O(V_shell * E_shell)` |
+| **High Velocity** | Monitors bursts of high-frequency transactions from a single account. | `O(E)` |
 
 **Performance Goal**: Handles up to 10,000 transactions in under 30 seconds through adjacency list optimizations and efficient pruning.
 
@@ -71,7 +71,7 @@ Scores are cumulative and capped at **100**.
 - **Fan-Out (Pass-through behavior)**: +40 points
 - **Shell Chain Member**: +30 points
 - **High Velocity Burst**: +15 points
-- **High Volume Bonus**: $min(20, 2 \cdot \log_{10}(\text{total\_volume}))$
+- **High Volume Bonus**: `min(20, 2 * log10(total_volume))`
 
 ### Trust & Mitigation Factors
 - **Duration Penalty**: -30 points if account activity spans $>7$ days with no structural structural patterns.
