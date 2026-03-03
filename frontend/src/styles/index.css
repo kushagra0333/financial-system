@@ -1,0 +1,72 @@
+@import './fonts.css';
+@import './tailwind.css';
+@import './theme.css';
+
+/* React Flow dark theme customization */
+.react-flow__node {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.react-flow__node:hover {
+  transform: scale(1.05);
+}
+
+.react-flow__edge-path {
+  stroke-width: 2;
+}
+
+/* React Flow dark/light theme customization */
+.react-flow__controls {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  border-radius: var(--radius);
+}
+
+.react-flow__controls button {
+  background-color: var(--card);
+  border-bottom: 1px solid var(--border);
+  color: var(--muted-foreground);
+  fill: var(--muted-foreground);
+}
+
+.react-flow__controls button:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+  fill: var(--accent-foreground);
+}
+
+.react-flow__minimap {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.react-flow__background {
+  /* Handled by component prop, but set default just in case */
+  background-color: transparent;
+}
+
+.react-flow__attribution {
+  display: none;
+}
+
+/* Custom animations */
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+  }
+
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
